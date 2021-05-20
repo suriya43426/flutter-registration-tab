@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:demo_registation/models/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
+  final _profile = Profile();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +32,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   'Name',
                   style: TextStyle(fontSize: 15),
                 ),
-                TextFormField(),
+                TextFormField(
+                  onSaved: (String firstName){
+                    _profile.firstName = firstName;
+                  },
+                ),
                 SizedBox(
                   height: 15,
                 ),
                 Text('LastName', style: TextStyle(fontSize: 15)),
-                TextFormField(),
+                TextFormField(
+                  onSaved: (String lastName){
+                    _profile.lastName = lastName;
+                  },
+                ),
                 SizedBox(
                   height: 15,
                 ),
                 Text('Email', style: TextStyle(fontSize: 15)),
-                TextFormField(),
+                TextFormField(
+                  onSaved: (String email){
+                    _profile.email = email;
+                  },
+                ),
                 SizedBox(
                   height: 15,
                 ),
@@ -71,6 +85,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: RaisedButton(
                     onPressed: () {
                       print('Regis');
+                      _formKey.currentState.validate();
+                      print('${_profile.firstName}${_profile.lastName}${_profile.email}');
                     },
                     child: Text('SendRegister'),
                   ),
