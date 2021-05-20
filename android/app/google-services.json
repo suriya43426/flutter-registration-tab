@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "754685157103",
+    "project_id": "registrationflutter",
+    "storage_bucket": "registrationflutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754685157103:android:a9dc448d90839484b5051a",
+        "android_client_info": {
+          "package_name": "th.in.nextflow.flutter.demo.registerpad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754685157103-iu38ahnl7ce40bcd1caiq7jo1ji8lkdl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9Cwl7chp_P185uWn4BK5pYVhfE-5Rczo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754685157103-iu38ahnl7ce40bcd1caiq7jo1ji8lkdl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
