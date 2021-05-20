@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:demo_registation/models/profile.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,14 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final _profile = Profile();
+  final passwordValidator = MultiValidator([
+    RequiredValidator(errorText: 'password is required'),
+    MinLengthValidator(8, errorText: 'password must be at least 8 digits long'),
+    PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'passwords must have at least one special character')
+  ]);
+
+  String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +42,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   style: TextStyle(fontSize: 15),
                 ),
                 TextFormField(
+                  validator: RequiredValidator(errorText: 'กรุณากรอกชื่อ'),
                   onSaved: (String firstName){
                     _profile.firstName = firstName;
                   },
@@ -42,6 +52,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Text('LastName', style: TextStyle(fontSize: 15)),
                 TextFormField(
+                  validator: RequiredValidator(errorText: 'กรุณากรอกนามสกุล'),
                   onSaved: (String lastName){
                     _profile.lastName = lastName;
                   },
@@ -51,6 +62,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Text('Email', style: TextStyle(fontSize: 15)),
                 TextFormField(
+                  validator: (val) => MatchValidator(errorText: 'passwords do not match').validateMatch(val, password),
                   onSaved: (String email){
                     _profile.email = email;
                   },
@@ -86,7 +98,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     onPressed: () {
                       print('Regis');
                       _formKey.currentState.validate();
-                      print('${_profile.firstName}${_profile.lastName}${_profile.email}');
+                      print('${_profile.firstName} ${_profile.lastName} ${_profile.email}');
                     },
                     child: Text('SendRegister'),
                   ),
