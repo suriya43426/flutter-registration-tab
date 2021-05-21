@@ -62,7 +62,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Text('Email', style: TextStyle(fontSize: 15)),
                 TextFormField(
-                  validator: (val) => MatchValidator(errorText: 'passwords do not match').validateMatch(val, password),
+                  validator: RequiredValidator(errorText: 'กรุณากรอก email'),
                   onSaved: (String email){
                     _profile.email = email;
                   },
@@ -97,7 +97,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: RaisedButton(
                     onPressed: () {
                       print('Regis');
-                      _formKey.currentState.validate();
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                      }
                       print('${_profile.firstName} ${_profile.lastName} ${_profile.email}');
                     },
                     child: Text('SendRegister'),

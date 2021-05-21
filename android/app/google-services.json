@@ -29,6 +29,13 @@
             {
               "client_id": "754685157103-iu38ahnl7ce40bcd1caiq7jo1ji8lkdl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "754685157103-ol464po67afn0ucfgn6hob54igkcvcqg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "th.in.nextflow.flutter.demo.registerpad"
+              }
             }
           ]
         }
