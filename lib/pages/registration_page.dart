@@ -77,10 +77,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Text('Email', style: TextStyle(fontSize: 15)),
                 TextFormField(
-                  validator: RequiredValidator(errorText: 'กรุณากรอก email'),
+                  validator: MultiValidator([
+                  RequiredValidator(errorText: 'กรุณากรอก Email'),
+                    EmailValidator(errorText: 'กรุณากรอก email ที่ถูกต้อง')]
+                  ),
                   onSaved: (String email) {
                     _profile.email = email;
                   },
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(
                   height: 15,
