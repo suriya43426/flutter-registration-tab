@@ -1,9 +1,14 @@
-import 'dart:async';
+import 'dart:io';
+import 'package:path/path.dart';
 
+// ignore: avoid_web_libraries_in_flutter
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo_registation/models/profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage({Key key}) : super(key: key);
@@ -13,15 +18,25 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _profile = Profile();
-  final passwordValidator = MultiValidator([
-    RequiredValidator(errorText: 'password is required'),
-    MinLengthValidator(8, errorText: 'password must be at least 8 digits long'),
-    PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'passwords must have at least one special character')
-  ]);
+  CollectionReference _profilesCollection =
+      FirebaseFirestore.instance.collection('profilesCollection');
 
-  String password;
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
+  final ImagePicker _picker = ImagePicker();
+  File _selectedImageFile;
+
+  final _formKey = GlobalKey<FormState>();
+  Profile _profile = Profile();
+
+  getImage() async {
+    final selectedFile = await _picker.getImage(source: ImageSource.camera);
+    print(selectedFile.path);
+
+    setState(() {
+      _selectedImageFile = File(selectedFile.path);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +58,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 TextFormField(
                   validator: RequiredValidator(errorText: 'กรุณากรอกชื่อ'),
-                  onSaved: (String firstName){
+                  onSaved: (String firstName) {
                     _profile.firstName = firstName;
                   },
                 ),
@@ -53,7 +68,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Text('LastName', style: TextStyle(fontSize: 15)),
                 TextFormField(
                   validator: RequiredValidator(errorText: 'กรุณากรอกนามสกุล'),
-                  onSaved: (String lastName){
+                  onSaved: (String lastName) {
                     _profile.lastName = lastName;
                   },
                 ),
@@ -63,7 +78,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Text('Email', style: TextStyle(fontSize: 15)),
                 TextFormField(
                   validator: RequiredValidator(errorText: 'กรุณากรอก email'),
-                  onSaved: (String email){
+                  onSaved: (String email) {
                     _profile.email = email;
                   },
                 ),
@@ -76,15 +91,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: Ink(
                     color: Colors.grey[300],
                     child: InkWell(
-                      onTap: (){
-                        print('xxx');
-                      },
-                      child: Container(
-                        height: 200,
-                        child: Center(
-                          child: Icon(Icons.camera_alt),
-                        ),
-                      ),
+                        onTap: () {
+                          print('xxx');
+                          getImage();
+                        },
+                        child: _selectedImageFile != null
+                            ? Image.file(_selectedImageFile)
+                            : Container(
+                                height: 150,
+                                child: Center(
+                                  child: Icon(Icons.camera_alt),
+                                ),
+                              ),
                     ),
                   ),
                 ),
@@ -95,14 +113,56 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   width: double.infinity,
                   height: 50,
                   child: RaisedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       print('Regis');
                       if (_formKey.currentState.validate()) {
                         _formKey.currentState.save();
+                        print(
+                            '${_profile.firstName} ${_profile.lastName} ${_profile.email}');
+                        
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context){
+                            return Dialog(
+                              child: Container(
+                                padding: EdgeInsets.all(15),
+                                child: Row(
+                                  children: [
+                                    CircularProgressIndicator(),
+                                    SizedBox(width: 10,),
+                                    Text('กำลังบันทึกข้อมูล')
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        );
+
+                        await _profilesCollection.add({
+                          'first_name': _profile.firstName,
+                          'last_name': _profile.lastName,
+                          'email': _profile.email
+                        });
+
+                        if (_selectedImageFile != null) {
+                          String fileName = basename(_selectedImageFile.path);
+                          _storage
+                              .ref()
+                              .child('images')
+                              .child('register')
+                              .child(fileName)
+                              .putFile(_selectedImageFile);
+                        }
+                        Navigator.pop(context);
+                        _formKey.currentState.reset();
+
+                        setState(() {
+                          _selectedImageFile=null;
+                        });
                       }
-                      print('${_profile.firstName} ${_profile.lastName} ${_profile.email}');
                     },
-                    child: Text('SendRegister'),
+                    child: Text('ลงทะเบียน'),
                   ),
                 )
               ],
